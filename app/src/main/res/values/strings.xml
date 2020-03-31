@@ -3,4 +3,5 @@
     <string name="settings_button">Settings</string>
     <string name="logo_text">Logo</string>
     <string name="start_button">Get Moondata</string>
+    <string name="no_data_found">Mhm, seems there\'s no moon.</string>
 </resources>
