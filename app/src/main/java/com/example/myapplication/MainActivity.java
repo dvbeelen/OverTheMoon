@@ -6,7 +6,6 @@ import androidx.core.app.ActivityCompat;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -22,17 +21,13 @@ import org.json.JSONObject;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import android.location.Location;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.OnFailureListener;
 
 
 public class MainActivity extends AppCompatActivity
@@ -40,6 +35,7 @@ public class MainActivity extends AppCompatActivity
 
     public Button loadDataButton;
     private TextView result;
+    private TextView coordinates;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
     private boolean requestLocationUpdates = false;
@@ -58,15 +54,18 @@ public class MainActivity extends AppCompatActivity
         loadDataButton.setOnClickListener(this);
 
         result = findViewById(R.id.result_text);
+        coordinates = findViewById(R.id.current_coordinates);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         locationCallback = new LocationCallback(){
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                Log.d(LOG_TAG, "Callback started");
                 if (locationResult == null) {
-                    return;
+                    Log.d(LOG_TAG, "No Location found.");
                 }
+                assert locationResult != null;
                 for (Location location : locationResult.getLocations()) {
                     Log.d(LOG_TAG, "Location update received.");
                     Latitude = location.getLatitude();
@@ -79,17 +78,20 @@ public class MainActivity extends AppCompatActivity
     private void requestLastKnownLocation() {
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
-                    // Got last known location. In some rare situations this can be null.
+                    // Got last known location.
                     if (location != null) {
                         requestLocationUpdates = true;
                         startLocationUpdates();
                         Latitude = location.getLatitude();
                         Longitude = location.getLatitude();
                         Log.d(LOG_TAG, "Location found");
+                        //Location is found, but it's null
                     } else {
                         Log.d(LOG_TAG, "Last known location found, but it's null");
                         startLocationUpdates();
+                        requestLocationUpdates = true;
                     }
+                    //The location was not found.
                 }).addOnFailureListener(this, (e) -> {
                 requestLocationUpdates = true;
                 Log.d(LOG_TAG, "Location not found");
@@ -160,6 +162,7 @@ public class MainActivity extends AppCompatActivity
                                 Log.d(API_TAG, "Succesful API Fetch.");
                                 try {
                                     result.setText("Moon will rise at: " + response.getString("moonrise"));
+                                    coordinates.setText("You're current coordinates" + Longitude + Latitude );
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
