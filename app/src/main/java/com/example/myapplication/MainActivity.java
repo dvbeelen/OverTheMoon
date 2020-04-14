@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -50,14 +51,17 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Get layout-items.
         loadDataButton = findViewById(R.id.data_button);
         loadDataButton.setOnClickListener(this);
 
         result = findViewById(R.id.result_text);
         coordinates = findViewById(R.id.current_coordinates);
 
+        //Get fusedLocationClient to make GPS possible.
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        //Update location once Last Known Location is checked.
         locationCallback = new LocationCallback(){
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity
                 if (locationResult == null) {
                     Log.d(LOG_TAG, "No Location found.");
                 }
+                //If location is not 0, update the current Latitude and Longitude location.
                 assert locationResult != null;
                 for (Location location : locationResult.getLocations()) {
                     Log.d(LOG_TAG, "Location update received.");
@@ -75,6 +80,7 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
+    //Get the last known location from device.
     private void requestLastKnownLocation() {
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
@@ -85,13 +91,13 @@ public class MainActivity extends AppCompatActivity
                         Latitude = location.getLatitude();
                         Longitude = location.getLatitude();
                         Log.d(LOG_TAG, "Location found");
-                        //Location is found, but it's null
+                        //If location is found, but it's null, still start the request for location updates
                     } else {
                         Log.d(LOG_TAG, "Last known location found, but it's null");
                         startLocationUpdates();
                         requestLocationUpdates = true;
                     }
-                    //The location was not found.
+                    //The location was not found. Still the application will try to get location updates.
                 }).addOnFailureListener(this, (e) -> {
                 requestLocationUpdates = true;
                 Log.d(LOG_TAG, "Location not found");
@@ -107,6 +113,7 @@ public class MainActivity extends AppCompatActivity
         return locationRequest;
     }
 
+    //When App resumes after pause or shutdown, get current location.
     @Override
     protected void onResume() {
         super.onResume();
@@ -115,17 +122,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    //Start looking for location updates
     private void startLocationUpdates(){
         boolean permissionAccessCoarseLocationApproved =
                 ActivityCompat.checkSelfPermission(this,
                         Manifest.permission.ACCESS_COARSE_LOCATION) ==
                         PackageManager.PERMISSION_GRANTED;
+        //Check if permission is granted to access device GPS location. If it is, start the locationCallback.
         if (permissionAccessCoarseLocationApproved) {
             Log.d(LOG_TAG, "Permission Granted.");
             fusedLocationClient.requestLocationUpdates(createLocationRequest(),
                     locationCallback,
                     Looper.getMainLooper());
         } else {
+            //If permission is not given
             Log.d(LOG_TAG, "Permission Denied. Ask User for Permission.");
             requestLocationUpdates = false;
             ActivityCompat.requestPermissions(this, new String[] {
@@ -146,22 +156,30 @@ public class MainActivity extends AppCompatActivity
         startLocationUpdates();
     }
 
+    //Function that handles button clicks on the main-page.
     public void onClick(View view)
     {
         switch (view.getId()) {
+            //Check if the data_button is pressed.
             case R.id.data_button:
                 requestLastKnownLocation();
                 Log.d(API_TAG, "Button clicked, request send");
                 RequestQueue queue = Volley.newRequestQueue(this);
+                //Make a call to the api.ipgeolocation.io, sending the Latitude and Longitude values with it to get location-relevant data.
                 final String uri = "https://api.ipgeolocation.io/astronomy?apiKey=23db69866d064920877a97972d57bbb3&lat=" +  Latitude + "&long=" + Longitude;
                 Log.d(API_TAG, uri);
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                         (Request.Method.GET, uri, null, new Response.Listener<JSONObject>() {
+                            @SuppressLint("SetTextI18n")
                             @Override
                             public void onResponse(JSONObject response) {
                                 Log.d(API_TAG, "Succesful API Fetch.");
                                 try {
-                                    result.setText("Moon will rise at: " + response.getString("moonrise"));
+                                    result.setText( "Todays Date " + response.getString("date")
+                                                    + "\r\nMoon will rise at: " + response.getString("moonrise")
+                                                    + "\r\nMoon will set at: " + response.getString("moonset")
+                                                    + "\r\nMoons altitude from your location: " + response.getString("moon_altitude")
+                                                    + "\r\nMoons distance from earth: " + response.getString("moon_distance"));
                                     coordinates.setText("You're current coordinates" + Longitude + Latitude );
                                 } catch (JSONException e) {
                                     e.printStackTrace();

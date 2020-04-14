@@ -12,7 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="139dp"
         android:layout_marginTop="42dp"
+        android:layout_marginEnd="139dp"
+        android:layout_marginBottom="641dp"
         android:text="@string/start_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -20,13 +24,16 @@
         android:id="@+id/result_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="109dp"
+        android:layout_marginTop="196dp"
+        android:layout_marginEnd="110dp"
+        android:layout_marginBottom="516dp"
+        android:maxLines="15"
         android:text="@string/no_data_found"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.275" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/current_coordinates"
@@ -34,7 +41,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="120dp"
         android:layout_marginTop="144dp"
+        android:layout_marginEnd="123dp"
+        android:layout_marginBottom="568dp"
         android:text="@string/current_coordinates"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
