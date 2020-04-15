@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import java.util.Locale;
+
 public class SettingsActivity extends PreferenceActivity {
 
     @Override
@@ -14,7 +16,12 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.settings);
     }
 
-//    public static boolean getCountbackSetting (Context c){
-//        return PreferenceManager.getDefaultSharedPreferences(c).getBoolean("check_box_count_backwards", false);
-//    }
+    public static boolean getLanguageChoice(Context c) {
+        return PreferenceManager.getDefaultSharedPreferences(c).getBoolean("change_language", true);
+    }
+
+
+    private void setLocale(String lang, Context c) {
+       getSharedPreferences("change_language", Context.MODE_PRIVATE);
+    }
 }
