@@ -28,7 +28,7 @@ public class TitleActivity extends AppCompatActivity
     @Override
     public void onClick(View view)
     {
-        //Handle the button-clicks. Change activity. 
+        //Handle the button-clicks. Change activity.
         switch (view.getId()) {
             case R.id.start:
                 Intent mainActivity = new Intent(this, MainActivity.class);

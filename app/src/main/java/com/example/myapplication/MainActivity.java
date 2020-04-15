@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,21 +63,17 @@ public class MainActivity extends AppCompatActivity
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Update location once Last Known Location is checked.
-        locationCallback = new LocationCallback(){
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                Log.d(LOG_TAG, "Callback started");
-                if (locationResult == null) {
-                    Log.d(LOG_TAG, "No Location found.");
+        locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    if (locationResult == null) {
+                        Toast.makeText(getApplicationContext(),"Fetched current location. it's null",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    for (Location location : locationResult.getLocations()) {
+                        Toast.makeText(getApplicationContext(),"Fetched current location.",Toast.LENGTH_SHORT).show();
+                    }
                 }
-                //If location is not 0, update the current Latitude and Longitude location.
-                assert locationResult != null;
-                for (Location location : locationResult.getLocations()) {
-                    Log.d(LOG_TAG, "Location update received.");
-                    Latitude = location.getLatitude();
-                    Longitude = location.getLongitude();
-                }
-            }
         };
     }
 
@@ -166,7 +163,7 @@ public class MainActivity extends AppCompatActivity
                 Log.d(API_TAG, "Button clicked, request send");
                 RequestQueue queue = Volley.newRequestQueue(this);
                 //Make a call to the api.ipgeolocation.io, sending the Latitude and Longitude values with it to get location-relevant data.
-                final String uri = "https://api.ipgeolocation.io/astronomy?apiKey=23db69866d064920877a97972d57bbb3&lat=" +  Latitude + "&long=" + Longitude;
+                final String uri = "https://api.ipgeolocation.io/astronomy?apiKey=" + getString(R.string.secret_key) +  "&lat=" +  Latitude + "&long=" + Longitude;
                 Log.d(API_TAG, uri);
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                         (Request.Method.GET, uri, null, new Response.Listener<JSONObject>() {
