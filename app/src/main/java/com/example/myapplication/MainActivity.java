@@ -167,7 +167,6 @@ public class MainActivity extends AppCompatActivity
                 Log.d(API_TAG, uri);
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                         (Request.Method.GET, uri, null, new Response.Listener<JSONObject>() {
-                            @SuppressLint("SetTextI18n")
                             @Override
                             public void onResponse(JSONObject response) {
                                 Log.d(API_TAG, "Succesful API Fetch.");
@@ -177,7 +176,7 @@ public class MainActivity extends AppCompatActivity
                                                     + "\r\nMoon will set at: " + response.getString("moonset")
                                                     + "\r\nMoons altitude from your location: " + response.getString("moon_altitude")
                                                     + "\r\nMoons distance from earth: " + response.getString("moon_distance"));
-                                    coordinates.setText("You're current coordinates" + Longitude + Latitude );
+                                    coordinates.setText(R.string.current_location);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -186,7 +185,7 @@ public class MainActivity extends AppCompatActivity
                         }, error -> {
                             Log.d(API_TAG, "API request failed.");
                             Log.d(API_TAG, error.toString());
-                            result.setText("That's no moon. (Invalid location)");
+                            result.setText(R.string.error_text);
                             Log.d(API_TAG, uri);
                         });
 

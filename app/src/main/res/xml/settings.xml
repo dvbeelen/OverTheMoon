@@ -4,16 +4,12 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="check_box_preference_1"
-        android:title="Check box preference" />
-    <SwitchPreference
+        android:key="dark_mode"
+        android:summary="@string/dark_mode_description"
+        android:title="@string/dark_mode" />
+    <CheckBoxPreference
         android:defaultValue="false"
-        android:key="switch_preference_1"
-        android:title="Switch preference" />
-    <EditTextPreference
-        android:defaultValue="Default value"
-        android:key="edit_text_preference_1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="Edit text preference" />
+        android:key="change_language"
+        android:summary="@string/change_language_description"
+        android:title="@string/change_language" />
 </PreferenceScreen>
