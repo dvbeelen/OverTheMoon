@@ -14,7 +14,7 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.settings);
     }
 
-    public static boolean getCountbackSetting (Context c){
-        return PreferenceManager.getDefaultSharedPreferences(c).getBoolean("check_box_count_backwards", false);
-    }
+//    public static boolean getCountbackSetting (Context c){
+//        return PreferenceManager.getDefaultSharedPreferences(c).getBoolean("check_box_count_backwards", false);
+//    }
 }

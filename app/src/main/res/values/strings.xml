@@ -14,8 +14,13 @@
     <string name="current_location">Your current location: </string>
     <string name="moonrise">The moon shall rise at: </string>
     <string name="moonset">And set again at: </string>
-    <string name="altitude">This is the moon\'s current altitude: </string>
-    <string name="distance">The moon is this far away from earth: </string>
+    <string name="altitude">The moon\'s altitude: </string>
+    <string name="distance">The moon\'s distance: </string>
+
+    <string name="standard_moonrise">The end of the afternoon </string>
+    <string name="standard_moonset">The morning </string>
+    <string name="standard_altitude">Pretty high</string>
+    <string name="standard_distance">Pretty far</string>
 
     <!--  Settings  -->
     <string name="dark_mode">Enable Dark Mode</string>

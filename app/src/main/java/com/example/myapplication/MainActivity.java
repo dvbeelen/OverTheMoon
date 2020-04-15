@@ -38,6 +38,10 @@ public class MainActivity extends AppCompatActivity
     public Button loadDataButton;
     private TextView result;
     private TextView coordinates;
+    private TextView moonrise;
+    private TextView moonset;
+    private TextView moonaltitude;
+    private TextView moondistance;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
     private boolean requestLocationUpdates = false;
@@ -56,8 +60,13 @@ public class MainActivity extends AppCompatActivity
         loadDataButton = findViewById(R.id.data_button);
         loadDataButton.setOnClickListener(this);
 
+        //Get data-fields
         result = findViewById(R.id.result_text);
         coordinates = findViewById(R.id.current_coordinates);
+        moonrise = findViewById(R.id.data1);
+        moonset = findViewById(R.id.data2);
+        moonaltitude = findViewById(R.id.data3);
+        moondistance = findViewById(R.id.data4);
 
         //Get fusedLocationClient to make GPS possible.
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -171,12 +180,12 @@ public class MainActivity extends AppCompatActivity
                             public void onResponse(JSONObject response) {
                                 Log.d(API_TAG, "Succesful API Fetch.");
                                 try {
-                                    result.setText( "Todays Date " + response.getString("date")
-                                                    + "\r\nMoon will rise at: " + response.getString("moonrise")
-                                                    + "\r\nMoon will set at: " + response.getString("moonset")
-                                                    + "\r\nMoons altitude from your location: " + response.getString("moon_altitude")
-                                                    + "\r\nMoons distance from earth: " + response.getString("moon_distance"));
-                                    coordinates.setText(R.string.current_location);
+                                    result.setText( "Todays Date " + response.getString("date"));
+                                    coordinates.setText(getString(R.string.current_location));
+                                    moonrise.setText(response.getString("moonrise"));
+                                    moonset.setText(response.getString("moonset"));
+                                    moonaltitude.setText(response.getString("moon_altitude"));
+                                    moondistance.setText(response.getString("moon_distance"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -185,7 +194,7 @@ public class MainActivity extends AppCompatActivity
                         }, error -> {
                             Log.d(API_TAG, "API request failed.");
                             Log.d(API_TAG, error.toString());
-                            result.setText(R.string.error_text);
+                            result.setText(getString(R.string.error_text));
                             Log.d(API_TAG, uri);
                         });
 
