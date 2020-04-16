@@ -8,10 +8,10 @@ import android.preference.PreferenceManager;
 public class SettingsActivity extends PreferenceActivity {
 
     //I've used constants to refer to my setting-names.
-    public static final String usernameSetting = "username";
-    public static final String customLat = "custom_lat";
-    public static final String customLon = "custom_lon";
-    public static final String gps_permission = "gps_permission";
+    private static final String usernameSetting = "username";
+    private static final String customLat = "custom_lat";
+    private static final String customLon = "custom_lon";
+    private static final String gps_permission = "gps_permission";
 
 
     @Override

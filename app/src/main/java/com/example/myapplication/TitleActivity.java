@@ -31,7 +31,6 @@ public class TitleActivity extends AppCompatActivity
 
         //Greet the user with the Username given in Settings.
         Toast.makeText(getApplicationContext(), "Welcome " + SettingsActivity.getUsernameSetting(this), Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
