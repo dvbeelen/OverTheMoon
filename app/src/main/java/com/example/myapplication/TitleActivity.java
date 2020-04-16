@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -28,6 +29,8 @@ public class TitleActivity extends AppCompatActivity
         startButton = findViewById(R.id.start);
         startButton.setOnClickListener(this);
 
+        //Greet the user with the Username given in Settings.
+        Toast.makeText(getApplicationContext(),"Welcome " + SettingsActivity.getUsernameSetting(this),Toast.LENGTH_SHORT).show();
     }
 
     @Override

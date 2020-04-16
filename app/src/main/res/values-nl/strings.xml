@@ -28,8 +28,11 @@
     <string name="user_name_sum">Geef je naam op voor een begroeting!</string>
     <string name="standard_username">Gebruiker</string>
 
+    <string name="lat_default">Zelf gekozen latitude</string>
+    <string name="lat_default_sum">Als geen GPS beschikbaar is, dan wordt automatisch deze latitude-cöordinaat verwerkt.</string>
+    <string name="standard_lat">0.0</string>
 
-    <string name="location_default">Je standaardlocatie</string>
-    <string name="location_default_sum">Voor deze locatie zal data opgehaald worden als de GPS verbinding ontbreekt.</string>
-    <string name="standard_location">Amsterdam</string>
+    <string name="lon_default">Zelf gekozen longitude</string>
+    <string name="lon_default_sum">Als geen GPS beschikbaar is, dan wordt automatisch deze longitude-cöordinaat verwerkt</string>
+    <string name="standard_lon">0.0</string>
 </resources>

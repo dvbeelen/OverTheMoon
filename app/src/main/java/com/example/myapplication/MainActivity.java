@@ -12,10 +12,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,7 +37,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity
@@ -52,10 +52,14 @@ public class MainActivity extends AppCompatActivity
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
     private boolean requestLocationUpdates = false;
-    public int REQ_PERM_LOC_UPDATES = 1;
+
+    private boolean GPSFailed;
+
     private double Latitude;
     private double Longitude;
-    private Locale locale = null;
+
+    private String defaultLatitude;
+    private String defaultLongitude;
 
     //I've used constants as Log-tags
     private final static String API_TAG = "API";
@@ -79,6 +83,12 @@ public class MainActivity extends AppCompatActivity
         moonaltitude = findViewById(R.id.data3);
         moondistance = findViewById(R.id.data4);
 
+        //Get user-defined standard coordinates
+        defaultLatitude = SettingsActivity.getDefLat(this);
+        defaultLongitude = SettingsActivity.getDefLon(this);
+
+        GPSFailed = false;
+
         //Get fusedLocationClient to make GPS possible.
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -90,8 +100,11 @@ public class MainActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(),"Fetched current location. it's null",Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    //If location is updated, also fetch the API again.
                     for (Location location : locationResult.getLocations()) {
-                        Toast.makeText(getApplicationContext(),"Fetched current location.",Toast.LENGTH_SHORT).show();
+                        Latitude = location.getLatitude();
+                        Longitude = location.getLongitude();
+                        fetchApi();
                     }
                 }
         };
@@ -112,21 +125,24 @@ public class MainActivity extends AppCompatActivity
                         //If location is found, but it's null, still start the request for location updates
                     } else {
                         Log.d(LOG_TAG, "Last known location found, but it's null");
-                        startLocationUpdates();
+//                        startLocationUpdates();
                         requestLocationUpdates = true;
+                        GPSFailed = true;
                     }
                     //The location was not found. Still the application will try to get location updates.
                 }).addOnFailureListener(this, (e) -> {
                 requestLocationUpdates = true;
                 Log.d(LOG_TAG, "Location not found");
-                startLocationUpdates();
+                GPSFailed = true;
+//                startLocationUpdates();
         });
     }
 
+    //Formulate a request for the users location
     protected LocationRequest createLocationRequest() {
         LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(30000);
+        locationRequest.setFastestInterval(25000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return locationRequest;
     }
@@ -154,11 +170,11 @@ public class MainActivity extends AppCompatActivity
                     Looper.getMainLooper());
         } else {
             //If permission is not given
-            Log.d(LOG_TAG, "Permission Denied. Ask User for Permission.");
-            requestLocationUpdates = false;
-            ActivityCompat.requestPermissions(this, new String[] {
-                    Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQ_PERM_LOC_UPDATES);
+            Log.d(LOG_TAG, "Permission Denied.");
+            Toast.makeText(getApplicationContext(),"No GPS, switching to given default coordinates", Toast.LENGTH_SHORT).show();
+            Log.d(LOG_TAG, defaultLatitude + defaultLongitude);
+            GPSFailed = true;
+
         }
     }
 
@@ -182,37 +198,53 @@ public class MainActivity extends AppCompatActivity
             case R.id.data_button:
                 requestLastKnownLocation();
                 Log.d(API_TAG, "Button clicked, request send");
-                RequestQueue queue = Volley.newRequestQueue(this);
-                //Make a call to the api.ipgeolocation.io, sending the Latitude and Longitude values with it to get location-relevant data.
-                final String uri = "https://api.ipgeolocation.io/astronomy?apiKey=" + getString(R.string.secret_key) +  "&lat=" +  Latitude + "&long=" + Longitude;
-                Log.d(API_TAG, uri);
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                        (Request.Method.GET, uri, null, new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                //If API returns data succesfully, set it on the page.
-                                Log.d(API_TAG, "Succesfull API Fetch.");
-                                try {
-                                    result.setText( "Todays Date " + response.getString("date"));
-                                    coordinates.setText(getString(R.string.current_location));
-                                    moonrise.setText(response.getString("moonrise"));
-                                    moonset.setText(response.getString("moonset"));
-                                    moonaltitude.setText(response.getString("moon_altitude"));
-                                    moondistance.setText(response.getString("moon_distance"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                Log.d(API_TAG, uri);
-                            }
-                        }, error -> {
-                            Log.d(API_TAG, "API request failed.");
-                            Log.d(API_TAG, error.toString());
-                            result.setText(getString(R.string.error_text));
-                            Log.d(API_TAG, uri);
-                        });
-
-                queue.add(jsonObjectRequest);
+                fetchApi();
                 break;
         }
+    }
+
+    //Fetch API with the found GPS-data
+    public void fetchApi () {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //Make a call to the api.ipgeolocation.io, sending the Latitude and Longitude values with it to get location-relevant data.
+        String uriLat;
+        String uriLon;
+
+        if (GPSFailed){
+             uriLat = defaultLatitude;
+             uriLon = defaultLongitude;
+        } else {
+            uriLat = Double.toString(Latitude);
+            uriLon = Double.toString(Longitude);
+        }
+
+        final String uri = "https://api.ipgeolocation.io/astronomy?apiKey=" + getString(R.string.secret_key) +  "&lat=" +  uriLat + "&long=" + uriLon;
+        Log.d(API_TAG, uri);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, uri, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //If API returns data succesfully, set it on the page.
+                        Log.d(API_TAG, "Succesfull API Fetch.");
+                        try {
+                            result.setText( "Todays Date " + response.getString("date"));
+                            coordinates.setText(getString(R.string.current_location));
+                            moonrise.setText(response.getString("moonrise"));
+                            moonset.setText(response.getString("moonset"));
+                            moonaltitude.setText(response.getString("moon_altitude"));
+                            moondistance.setText(response.getString("moon_distance"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d(API_TAG, uri);
+                    }
+                }, error -> {
+                    Log.d(API_TAG, "API request failed.");
+                    Log.d(API_TAG, error.toString());
+                    result.setText(getString(R.string.error_text));
+                    Log.d(API_TAG, uri);
+                });
+
+        queue.add(jsonObjectRequest);
     }
 }

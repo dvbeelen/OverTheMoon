@@ -29,8 +29,12 @@
     <string name="user_name_sum">Just for a friendly greeting.</string>
     <string name="standard_username">User</string>
 
+    <string name="lat_default">Custom set Latitude</string>
+    <string name="lat_default_sum">If no GPS-signal is found, this latitude will be set automatically.</string>
+    <string name="standard_lat">0.0</string>
 
-    <string name="location_default">Your preferred standard location</string>
-    <string name="location_default_sum">If no GPS-signal is found, this location will be set automatically.</string>
-    <string name="standard_location">Amsterdam</string>
+    <string name="lon_default">Custom set Longitude</string>
+    <string name="lon_default_sum">If no GPS-signal is found, this longitude will be set automatically.</string>
+    <string name="standard_lon">0.0</string>
+
 </resources>

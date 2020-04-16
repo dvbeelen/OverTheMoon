@@ -3,17 +3,24 @@
     android:title="Settings">
 
     <EditTextPreference
-        android:defaultValue="false"
+        android:defaultValue="Username"
         android:key="username"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:summary="@string/user_name_sum"
         android:title="@string/user_name" />
     <EditTextPreference
-        android:defaultValue="false"
-        android:key="def_location"
+        android:defaultValue= "0.0"
+        android:key="custom_lon"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:summary="@string/location_default_sum"
-        android:title="@string/location_default" />
+        android:summary="@string/lon_default_sum"
+        android:title="@string/lon_default" />
+    <EditTextPreference
+        android:defaultValue="0.0"
+        android:key="custom_lat"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="@string/lat_default_sum"
+        android:title="@string/lat_default" />
 </PreferenceScreen>
