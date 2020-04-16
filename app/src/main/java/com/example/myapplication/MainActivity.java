@@ -1,11 +1,7 @@
 package com.example.myapplication;
 
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -35,7 +31,6 @@ public class MainActivity extends AppCompatActivity
     //Screen-related Variables
     public Button loadDataButton;
     private TextView result;
-    private TextView coordinates;
     private TextView moonrise;
     private TextView moonset;
     private TextView moonaltitude;
@@ -70,7 +65,6 @@ public class MainActivity extends AppCompatActivity
 
         //Get data-fields
         result = findViewById(R.id.result_text);
-        coordinates = findViewById(R.id.current_coordinates);
         moonrise = findViewById(R.id.data1);
         moonset = findViewById(R.id.data2);
         moonaltitude = findViewById(R.id.data3);
@@ -79,7 +73,6 @@ public class MainActivity extends AppCompatActivity
         //Get user-defined standard coordinates
         defaultLatitude = SettingsActivity.getDefLat(this);
         defaultLongitude = SettingsActivity.getDefLon(this);
-
         GPSFailed = true;
 
         //Get fusedLocationClient to make GPS possible.
@@ -190,15 +183,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //Fetch API with the found GPS-data
+    //Make a call to the api.ipgeolocation.io, sending the Latitude and Longitude values with it to get location-relevant data.
     public void fetchApi () {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        //Make a call to the api.ipgeolocation.io, sending the Latitude and Longitude values with it to get location-relevant data.
+        //If the app failed to get GPS-data, the custom Latitude and Longitude values from the Settings-screen will be used to get data.
         if (GPSFailed){
              uriLat = defaultLatitude;
              uriLon = defaultLongitude;
              Log.d(API_TAG, "Used custom coordinats");
+
+             //If app managed to get GPS-data, use that data to make the API-reguest.
         } if (!GPSFailed) {
             uriLat = Double.toString(Latitude);
             uriLon = Double.toString(Longitude);
@@ -214,8 +209,7 @@ public class MainActivity extends AppCompatActivity
                         //If API returns data succesfully, set it on the page.
                         Log.d(API_TAG, "Succesfull API Fetch.");
                         try {
-                            result.setText( "Todays Date " + response.getString("date"));
-                            coordinates.setText(getString(R.string.current_location));
+                            result.setText(R.string.data_found);
                             moonrise.setText(response.getString("moonrise"));
                             moonset.setText(response.getString("moonset"));
                             moonaltitude.setText(response.getString("moon_altitude"));
@@ -229,7 +223,6 @@ public class MainActivity extends AppCompatActivity
                     Log.d(API_TAG, "API request failed.");
                     Log.d(API_TAG, error.toString());
                     result.setText(getString(R.string.error_text));
-                    Log.d(API_TAG, uri);
                 });
 
         queue.add(jsonObjectRequest);

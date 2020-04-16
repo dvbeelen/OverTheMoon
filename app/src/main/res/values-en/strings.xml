@@ -11,6 +11,7 @@
     <!--  Data Page  -->
     <string name="start_button">Get Moondata</string>
     <string name="no_data_found">Mhm, seems there\'s no moon.</string>
+    <string name="data_found">Data found!</string>
     <string name="error_text">That\'s no moon (no data found)</string>
 
     <string name="current_location">Your current location: </string>
@@ -36,5 +37,8 @@
     <string name="lon_default">Custom set Longitude</string>
     <string name="lon_default_sum">If no GPS-signal is found, this longitude will be set automatically.</string>
     <string name="standard_lon">0.0</string>
+
+    <string name="gps_request">GPS Permission</string>
+    <string name="gps_request_sum">If you didn\'t give permission the first time, turning this setting on will give you a chance to give GPS Permission again </string>
 
 </resources>

@@ -3,26 +3,20 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.util.Locale;
-import java.util.Set;
-
 public class TitleActivity extends AppCompatActivity
         implements View.OnClickListener {
 
+    //Get buttons on screen
     public Button startButton;
     public Button settings;
-    public boolean language;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +37,12 @@ public class TitleActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+        //If the GPS Permission setting is set to true, this function will check if the permission is already given.
         if (SettingsActivity.requestGPSPermission(this)){
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 Toast.makeText(getApplicationContext(), "Permission is already given.", Toast.LENGTH_SHORT).show();
+                //If the permission is not already given, the app will ask permission again.
             } else {
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
             }

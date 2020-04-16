@@ -10,6 +10,7 @@
     <!--  Data Page  -->
     <string name="start_button">Haal maandata op</string>
     <string name="no_data_found">Mhm, geen maan blijkbaar</string>
+    <string name="data_found">Data gevonden!</string>
     <string name="error_text">Da\'s geen maan. (Niks gevonden)</string>
 
     <string name="current_location">Jouw locatie: </string>
@@ -35,4 +36,7 @@
     <string name="lon_default">Zelf gekozen longitude</string>
     <string name="lon_default_sum">Als geen GPS beschikbaar is, dan wordt automatisch deze longitude-cöordinaat verwerkt. LET OP: verplicht format = 50.0</string>
     <string name="standard_lon">0.0</string>
+
+    <string name="gps_request">GPS Toestemming</string>
+    <string name="gps_request_sum">Mocht je de eerste keer geen toestemming hebben gegeven, dan kun je het met deze setting aan opnieuw proberen.</string>
 </resources>
