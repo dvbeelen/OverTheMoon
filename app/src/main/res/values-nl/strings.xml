@@ -8,8 +8,8 @@
     <string name="title_activity_settings2">Instellingen</string>
 
     <!--  Data Page  -->
-    <string name="start_button">Haal maandata op.</string>
-    <string name="no_data_found">Mhm, geen maan blijkbaar.</string>
+    <string name="start_button">Haal maandata op</string>
+    <string name="no_data_found">Mhm, geen maan blijkbaar</string>
     <string name="error_text">Da\'s geen maan. (Niks gevonden)</string>
 
     <string name="current_location">Jouw locatie: </string>
@@ -24,9 +24,12 @@
     <string name="standard_distance">Best ver</string>
 
     <!--  Settings  -->
-    <string name="dark_mode">Zet Dark Mode aan</string>
-    <string name="dark_mode_description">Maakt de app zo donker als de sterrenhemel zonder maan.</string>
+    <string name="user_name">Je gebruikersnaam</string>
+    <string name="user_name_sum">Geef je naam op voor een begroeting!</string>
+    <string name="standard_username">Gebruiker</string>
 
-    <string name="change_language">Change to English</string>
-    <string name="change_language_description">We\'re going international!</string>
+
+    <string name="location_default">Je standaardlocatie</string>
+    <string name="location_default_sum">Voor deze locatie zal data opgehaald worden als de GPS verbinding ontbreekt.</string>
+    <string name="standard_location">Amsterdam</string>
 </resources>

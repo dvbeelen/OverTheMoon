@@ -3,14 +3,19 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.preference.PreferenceManager;
 
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +36,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.Locale;
+
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener{
@@ -46,10 +53,14 @@ public class MainActivity extends AppCompatActivity
     private LocationCallback locationCallback;
     private boolean requestLocationUpdates = false;
     public int REQ_PERM_LOC_UPDATES = 1;
-    final static String API_TAG = "API";
-    final static String LOG_TAG = "Log";
     private double Latitude;
     private double Longitude;
+    private Locale locale = null;
+
+    //I've used constants as Log-tags
+    private final static String API_TAG = "API";
+    private final static String LOG_TAG = "Log";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +95,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
         };
+
     }
 
     //Get the last known location from device.
@@ -178,7 +190,8 @@ public class MainActivity extends AppCompatActivity
                         (Request.Method.GET, uri, null, new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                Log.d(API_TAG, "Succesful API Fetch.");
+                                //If API returns data succesfully, set it on the page.
+                                Log.d(API_TAG, "Succesfull API Fetch.");
                                 try {
                                     result.setText( "Todays Date " + response.getString("date"));
                                     coordinates.setText(getString(R.string.current_location));

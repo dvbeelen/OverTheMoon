@@ -2,14 +2,18 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="Settings">
 
-    <CheckBoxPreference
+    <EditTextPreference
         android:defaultValue="false"
-        android:key="dark_mode"
-        android:summary="@string/dark_mode_description"
-        android:title="@string/dark_mode" />
-    <CheckBoxPreference
+        android:key="username"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="@string/user_name_sum"
+        android:title="@string/user_name" />
+    <EditTextPreference
         android:defaultValue="false"
-        android:key="change_language"
-        android:summary="@string/change_language_description"
-        android:title="@string/change_language" />
+        android:key="def_location"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="@string/location_default_sum"
+        android:title="@string/location_default" />
 </PreferenceScreen>

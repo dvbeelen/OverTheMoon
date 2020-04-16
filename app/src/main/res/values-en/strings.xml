@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--  English Version  -->
 <resources>
     <!--  Title Page  -->
@@ -27,6 +28,7 @@
     <string name="user_name">Your username</string>
     <string name="user_name_sum">Just for a friendly greeting.</string>
     <string name="standard_username">User</string>
+
 
     <string name="location_default">Your preferred standard location</string>
     <string name="location_default_sum">If no GPS-signal is found, this location will be set automatically.</string>
