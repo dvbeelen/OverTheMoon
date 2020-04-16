@@ -33,6 +33,6 @@
     <string name="standard_lat">0.0</string>
 
     <string name="lon_default">Zelf gekozen longitude</string>
-    <string name="lon_default_sum">Als geen GPS beschikbaar is, dan wordt automatisch deze longitude-cöordinaat verwerkt</string>
+    <string name="lon_default_sum">Als geen GPS beschikbaar is, dan wordt automatisch deze longitude-cöordinaat verwerkt. LET OP: verplicht format = 50.0</string>
     <string name="standard_lon">0.0</string>
 </resources>

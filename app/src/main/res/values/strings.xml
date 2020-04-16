@@ -33,6 +33,6 @@
     <string name="standard_lat">0.0</string>
 
     <string name="lon_default">Custom set Longitude</string>
-    <string name="lon_default_sum">If no GPS-signal is found, this longitude will be set automatically.</string>
+    <string name="lon_default_sum">If no GPS-signal is found, this longitude will be set automatically. </string>
     <string name="standard_lon">0.0</string>
 </resources>

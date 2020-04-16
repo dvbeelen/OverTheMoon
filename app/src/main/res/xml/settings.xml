@@ -23,4 +23,8 @@
         android:singleLine="true"
         android:summary="@string/lat_default_sum"
         android:title="@string/lat_default" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="gps_permission"
+        android:title="Switch preference" />
 </PreferenceScreen>

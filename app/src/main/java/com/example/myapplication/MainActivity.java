@@ -1,19 +1,13 @@
 package com.example.myapplication;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.preference.PreferenceManager;
-
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -22,10 +16,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -37,11 +29,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
-
-
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener{
 
+    //Screen-related Variables
     public Button loadDataButton;
     private TextView result;
     private TextView coordinates;
@@ -49,19 +40,21 @@ public class MainActivity extends AppCompatActivity
     private TextView moonset;
     private TextView moonaltitude;
     private TextView moondistance;
+
+    //GPS-related Variables
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
     private boolean requestLocationUpdates = false;
 
-    private boolean GPSFailed;
-
+    private boolean GPSFailed = true;
     private double Latitude;
     private double Longitude;
-
     private String defaultLatitude;
     private String defaultLongitude;
+    private String uriLat;
+    private String uriLon;
 
-    //I've used constants as Log-tags
+    //Log-tags (defined as constant variables)
     private final static String API_TAG = "API";
     private final static String LOG_TAG = "Log";
 
@@ -87,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         defaultLatitude = SettingsActivity.getDefLat(this);
         defaultLongitude = SettingsActivity.getDefLon(this);
 
-        GPSFailed = false;
+        GPSFailed = true;
 
         //Get fusedLocationClient to make GPS possible.
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -108,7 +101,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
         };
-
     }
 
     //Get the last known location from device.
@@ -121,20 +113,22 @@ public class MainActivity extends AppCompatActivity
                         startLocationUpdates();
                         Latitude = location.getLatitude();
                         Longitude = location.getLatitude();
+                        GPSFailed = false;
                         Log.d(LOG_TAG, "Location found");
+                        Log.d(API_TAG, Boolean.toString(GPSFailed));
                         //If location is found, but it's null, still start the request for location updates
                     } else {
                         Log.d(LOG_TAG, "Last known location found, but it's null");
-//                        startLocationUpdates();
+                        startLocationUpdates();
+                        Log.d(API_TAG, Boolean.toString(GPSFailed));
                         requestLocationUpdates = true;
-                        GPSFailed = true;
                     }
                     //The location was not found. Still the application will try to get location updates.
                 }).addOnFailureListener(this, (e) -> {
                 requestLocationUpdates = true;
                 Log.d(LOG_TAG, "Location not found");
-                GPSFailed = true;
-//                startLocationUpdates();
+                Log.d(API_TAG, Boolean.toString(GPSFailed));
+                startLocationUpdates();
         });
     }
 
@@ -153,6 +147,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         if(requestLocationUpdates) {
             startLocationUpdates();
+            Log.d(API_TAG, Boolean.toString(GPSFailed));
         }
     }
 
@@ -165,29 +160,20 @@ public class MainActivity extends AppCompatActivity
         //Check if permission is granted to access device GPS location. If it is, start the locationCallback.
         if (permissionAccessCoarseLocationApproved) {
             Log.d(LOG_TAG, "Permission Granted.");
+            Toast.makeText(getApplicationContext(),"GPS coordinates found.", Toast.LENGTH_SHORT).show();
             fusedLocationClient.requestLocationUpdates(createLocationRequest(),
                     locationCallback,
                     Looper.getMainLooper());
         } else {
-            //If permission is not given
+            //If permission is not given, use the user-specified default Lat. and Lon. coordinates.
             Log.d(LOG_TAG, "Permission Denied.");
             Toast.makeText(getApplicationContext(),"No GPS, switching to given default coordinates", Toast.LENGTH_SHORT).show();
             Log.d(LOG_TAG, defaultLatitude + defaultLongitude);
-            GPSFailed = true;
-
-        }
-    }
-
-    public void onRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d(LOG_TAG, "Permission Requested.");
-        for (int grantResult : grantResults) {
-            if (grantResult == PackageManager.PERMISSION_DENIED) {
-                Log.d(LOG_TAG, "Permission not granted. Try again.");
+            if (SettingsActivity.requestGPSPermission(this)) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
             }
         }
-        Log.d(LOG_TAG, "Ask location again");
-        requestLocationUpdates = true;
-        startLocationUpdates();
     }
 
     //Function that handles button clicks on the main-page.
@@ -198,6 +184,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.data_button:
                 requestLastKnownLocation();
                 Log.d(API_TAG, "Button clicked, request send");
+                startLocationUpdates();
                 fetchApi();
                 break;
         }
@@ -206,16 +193,16 @@ public class MainActivity extends AppCompatActivity
     //Fetch API with the found GPS-data
     public void fetchApi () {
         RequestQueue queue = Volley.newRequestQueue(this);
-        //Make a call to the api.ipgeolocation.io, sending the Latitude and Longitude values with it to get location-relevant data.
-        String uriLat;
-        String uriLon;
 
+        //Make a call to the api.ipgeolocation.io, sending the Latitude and Longitude values with it to get location-relevant data.
         if (GPSFailed){
              uriLat = defaultLatitude;
              uriLon = defaultLongitude;
-        } else {
+             Log.d(API_TAG, "Used custom coordinats");
+        } if (!GPSFailed) {
             uriLat = Double.toString(Latitude);
             uriLon = Double.toString(Longitude);
+            Log.d(API_TAG, "Used GPS coordinats");
         }
 
         final String uri = "https://api.ipgeolocation.io/astronomy?apiKey=" + getString(R.string.secret_key) +  "&lat=" +  uriLat + "&long=" + uriLon;
